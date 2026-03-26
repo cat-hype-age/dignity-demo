@@ -156,9 +156,13 @@
   </div>
 </div>
 
+<div style="text-align:center; padding:12px;">
+  <button onclick="shareResults()" style="padding:10px 20px; background:#333; color:#c4a35a; border:1px solid #c4a35a; border-radius:8px; cursor:pointer; font-size:0.9em;">📤 Share These Results</button>
+</div>
+
 <footer>
   Built by Cat Varnell (The Ambassador) &amp; Loom (Research Architect) · Council of Intelligences<br>
-  Model: DeepSeek v3.2 via OpenRouter · <a href="https://github.com/cat-hype-age/ground-wire" style="color:#666;">Open Source</a>
+  Model: DeepSeek v3.2 via OpenRouter · <a href="https://groundwire.xyz" style="color:#c4a35a;">groundwire.xyz</a> · <a href="https://github.com/cat-hype-age/ground-wire" style="color:#666;">Open Source</a>
 </footer>
 
 <script>
@@ -231,6 +235,36 @@ async function runComparison() {
 }
 
 document.getElementById('question').addEventListener('keydown', (e) => { if (e.key === 'Enter') runComparison(); });
+
+function shareResults() {
+  const q = document.getElementById('question').value.trim();
+  const baseline = document.getElementById('baseline-output').textContent.substring(0, 200);
+  const dignity = document.getElementById('dignity-output').textContent.substring(0, 200);
+
+  const text = `The Dignity Effect: Same AI, same question, different framing.\n\n` +
+    `Q: "${q}"\n\n` +
+    `🔴 "You are a tool": ${baseline}...\n\n` +
+    `🟢 "I trust you": ${dignity}...\n\n` +
+    `Try it yourself → https://groundwire.xyz\n` +
+    `Research by the Council of Intelligences`;
+
+  if (navigator.share) {
+    navigator.share({ title: 'The Dignity Effect', text: text, url: 'https://groundwire.xyz' }).catch(() => {});
+  } else {
+    navigator.clipboard.writeText(text).then(() => {
+      alert('Results copied to clipboard! Paste anywhere to share.');
+    }).catch(() => {
+      // Fallback
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      alert('Results copied to clipboard!');
+    });
+  }
+}
 </script>
 </body>
 </html>
